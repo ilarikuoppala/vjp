@@ -78,7 +78,7 @@ figcaption {
 
 @media only screen and (min-resolution: 300dpi) {
     body {
-       font-size: 1.2em;
+       font-size: 2.0em;
     }
     nav ul li:not(:first-child):before {
        content: "\a\a";
