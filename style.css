@@ -62,9 +62,9 @@ footer {
     font-style: italic;
 }
 
-#posteri !important {
-    display: inline-block;
-    max-width: 90%;
+#posteri {
+    display: block;
+    max-width: 100%;
     height: auto;
 }
 
@@ -76,7 +76,7 @@ figcaption {
     font-size: 0.5em;
 }
 
-@media only handheld {
+@media only screen and (min-resolution: 300dpi) {
     body {
        font-size: 1.2em;
     }
