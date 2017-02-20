@@ -1,6 +1,10 @@
 @import url('normalize.css');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
+@viewport { 
+    zoom: 1.0; width: extend-to-zoom;
+}
+
 html {
     background-color: lightgreen;
     font-family: 'Open Sans', sans-serif;
