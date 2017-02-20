@@ -5,6 +5,9 @@
     zoom: 1.0;
     width: device-width;
 }
+@media only (max-device-width: 120mm) {
+  font-size: 1.2em;
+}
 
 html {
     background-color: lightgreen;
