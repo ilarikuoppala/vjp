@@ -5,13 +5,13 @@
     zoom: 1.0;
     width: device-width;
 }
-@media only (max-device-width: 120mm) {
-  font-size: 1.2em;
-}
+
+
 
 html {
     background-color: lightgreen;
     font-family: 'Open Sans', sans-serif;
+    max-width: 100%;
 }
 
 body {
@@ -62,13 +62,26 @@ footer {
     font-style: italic;
 }
 
-#posteri {
-    padding: 5mm;
+#posteri !important {
     display: inline-block;
     max-width: 90%;
     height: auto;
 }
 
+img {
+    max-width: 100%;
+}
+
 figcaption {
     font-size: 0.5em;
+}
+
+@media only screen and (max-width: 120mm) {
+    body {
+       font-size: 1.2em;
+    }
+    nav ul li:not(:first-child):before {
+       content: "\a\a";
+       white-space: pre;
+    }
 }
