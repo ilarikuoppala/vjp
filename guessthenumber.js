@@ -1,26 +1,26 @@
 
-function getRandomInteger(min,max) { return Math.floor((Math.random() * max) + min)};
-function compareNumbers(a,b) {return a==b};
+function getRandomInteger(min,max) { return Math.floor((Math.random() * max) + min);}
+function compareNumbers(a,b) {return a==b;}
 
 window.onload = onPageLoad;
 
 function onPageLoad() {
     addSubmitListener();
     correctNumber = getRandomInteger(1,10);
-};
+}
 
 function addSubmitListener() {
-    document.getElementById("button").addEventListener("click", guessTheNumber)
-};
+    document.getElementById("button").addEventListener("click", guessTheNumber);
+}
  
 function validateNumber(number) {
     if ( !(Number.isInteger(number)) || parseInt(number) > 10 || parseInt(number) < 1) {
-        alert("Invalid input");
+        alert("Invalid input, please enter a number between 1 and 10.");
         return false;
     } else {
         return true;
     }
-};
+}
 function guessTheNumber() {
     var input = Number(document.getElementById("number").value);
     if (validateNumber(input)) { 
@@ -28,8 +28,8 @@ function guessTheNumber() {
             alert("Your guess was correct! Congratulations!");
         } else {
             alert("Your guess was incorrect! Too bad!");
-        };
+        }
         correctNumber = getRandomInteger(1,10);
-    };
-};
+    }
+}
 
