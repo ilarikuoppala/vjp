@@ -35,7 +35,7 @@ function toggleAutoRotation() {
         rotate = false;
         $("#toggleRotateButton").text("Toista");
     } else {
-        interval = setInterval(rotateContent, 5000);
+        interval = setInterval(rotateContent, 10000);
         rotate = true;
         $("#toggleRotateButton").text("Tauota");
     }
