@@ -43,6 +43,11 @@ function setContent(data) {
     $("#mediaelement > #content").text(data.sisältö);
     $("#mediaelement > h3").text(data.otsikko);
     $("#mediaelement > p > #pvm").text(data.päivämäärä);
+    if (data.kuva != undefined) {
+        $("#mediaelement > #img").html(data.kuva);
+    } else {
+        $("#mediaelement > #img").html("");
+    }
 
 }
 
