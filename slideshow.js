@@ -33,7 +33,7 @@ function toggleAutoRotation() {
         clearInterval(interval);
         rotate = false;
     } else {
-        interval = setInterval(rotateContent, 3000);
+        interval = setInterval(rotateContent, 5000);
         rotate = true;
     }
 }
@@ -42,7 +42,7 @@ function setContent(data) {
     $("#mediaelement").hide().fadeIn();
     $("#mediaelement > #content").text(data.sisältö);
     $("#mediaelement > h3").text(data.otsikko);
-    $("#mediaelement > #pvm").text(data.päivämäärä);
+    $("#mediaelement > p > #pvm").text(data.päivämäärä);
 
 }
 
