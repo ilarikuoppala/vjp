@@ -1,11 +1,13 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'crazy-drill', { preload: preload, create: create, update: update, render: render });
 
+var basedir = 'crazy-drill'
+
 function preload() {
-    game.load.image('arrow', 'crazy-drill/assets/arrow.png');
-    game.load.image('target', 'crazy-drill/assets/target.png');
-    game.load.image('hit', 'crazy-drill/assets/hit.png');
-    game.load.image('miss', 'crazy-drill/assets/miss.png');
-    game.load.audio('background', ['crazy-drill/assets/Vicious.mp3', 'crazy-drill/assets/Vicious.ogg']);
+    game.load.image('arrow', basedir + '/assets/arrow.png');
+    game.load.image('target', basedir + '/assets/target.png');
+    game.load.image('hit', basedir + '/assets/hit.png');
+    game.load.image('miss', basedir + '/assets/miss.png');
+    game.load.audio('background', [ basedir + '/assets/Vicious.mp3', basedir + '/assets/Vicious.ogg']);
 }
 
 var timer = 0;
@@ -98,7 +100,7 @@ function createArrow(direction) {
 
 function updateScore(amount) {
   // adds the given amount to the score and updates the score text
-  score += amount;
+  score = Math.max(score + amount, 0);
   scoreText.setText("Score " + score)
 }
 
