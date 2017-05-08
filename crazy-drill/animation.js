@@ -3,11 +3,14 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'crazy-drill', { preload: pr
 var basedir = 'crazy-drill'
 
 function preload() {
+
     game.load.image('arrow', basedir + '/assets/arrow.png');
     game.load.image('target', basedir + '/assets/target.png');
     game.load.image('hit', basedir + '/assets/hit.png');
     game.load.image('miss', basedir + '/assets/miss.png');
+    game.load.image('ground', basedir + '/assets/ground.png');
     game.load.audio('background', [ basedir + '/assets/Vicious.mp3', basedir + '/assets/Vicious.ogg']);
+    game.load.spritesheet('button', basedir + '/assets/button.png', 500, 400);
 }
 
 var timer = 0;
@@ -21,6 +24,7 @@ var left = 250;
 var leftColumn = 250;
 var hitMargin = 30;
 var targetHeight = 540;
+var ground;
 
 var score = 0;
 var gameOver = false;
@@ -29,8 +33,11 @@ var targets = {};
 var arrows = { up:[], down:[], left:[], right:[] };
 var deadArrows = [];
 
-var scoreText = undefined;
-var music = undefined;
+var scoreText;
+var music;
+var button;
+var buttonText;
+
 function getRandomInteger(min, max) {
     randomInteger = Math.floor((Math.random() * max) + min);
 }
@@ -49,28 +56,38 @@ function createSprite(height, direction, sprite) {
 }
 
 function create() {
-
-    game.stage.backgroundColor = '#000000';
-
+    ground = game.add.tileSprite(0, 0, 800, 600, 'ground');
     music = game.add.audio('background');
-    music.play();
-
+    scoreText = game.add.text(10, 20, "Score " + score, {fill: "white"});
     targets['left'] = createSprite(targetHeight, 'left', 'target');
     targets['up'] = createSprite(targetHeight, 'up', 'target');
     targets['down'] = createSprite(targetHeight, 'down', 'target');
-    targets['right'] = createSprite(targetHeight, 'right', 'target')
-    scoreText = game.add.text(10, 20, "Score " + score, {fill: "white"})
+    targets['right'] = createSprite(targetHeight, 'right', 'target');
+    startGame();
+}
 
-    game.time.events.repeat(Phaser.Timer.SECOND*3/4, gameLength, active, this);
-    game.time.events.add(Phaser.Timer.SECOND*3/4 * gameLength + Phaser.Timer.SECOND*5, endGame, this);
+function startGame() {
+  gameOver = false;
+  score = 0;
+  updateScore(0);
+  music.play();
+  game.time.events.repeat(Phaser.Timer.SECOND*3/4, gameLength, active, this);
+  game.time.events.add(Phaser.Timer.SECOND*3/4 * gameLength + Phaser.Timer.SECOND*5, endGame, this);
 }
 
 function endGame() {
   music.stop()
   scoreText.setText("Game over! \nYour score was " + score)
   gameOver = true;
+  button = game.add.button(game.world.centerX - 95, 300, 'button', actionOnClick, this, 2, 1, 0);
+  buttonText = game.add.text(335, 335, "Play again");
 }
 
+function actionOnClick () {
+  button.destroy()
+  buttonText.destroy()
+  startGame();
+}
 
 function active() {
 
@@ -105,6 +122,11 @@ function updateScore(amount) {
 }
 
 function update() {
+
+    if (!gameOver) {
+        ground.tilePosition.y -= 2;
+    }
+
   for (direction in arrows) {
     for ( var i=0; i < arrows[direction].length; i++ ) {
       arrows[direction][i].y += 3;
