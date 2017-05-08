@@ -9,6 +9,7 @@ function preload() {
     game.load.image('hit', basedir + '/assets/hit.png');
     game.load.image('miss', basedir + '/assets/miss.png');
     game.load.image('ground', basedir + '/assets/ground.png');
+    game.load.image('drill', basedir + '/assets/drill.png');
     game.load.audio('background', [ basedir + '/assets/Vicious.mp3', basedir + '/assets/Vicious.ogg']);
     game.load.spritesheet('button', basedir + '/assets/button.png', 500, 400);
 }
@@ -24,14 +25,18 @@ var left = 250;
 var leftColumn = 250;
 var hitMargin = 30;
 var targetHeight = 540;
-var ground;
 
 var score = 0;
+var maxScore = gameLength*10
+var drillStartPos = 80;
+var drillEndPos = 470;
 var gameOver = false;
 
 var targets = {};
 var arrows = { up:[], down:[], left:[], right:[] };
 var deadArrows = [];
+var ground;
+var drill;
 
 var scoreText;
 var music;
@@ -62,7 +67,9 @@ function create() {
     targets['left'] = createSprite(targetHeight, 'left', 'target');
     targets['up'] = createSprite(targetHeight, 'up', 'target');
     targets['down'] = createSprite(targetHeight, 'down', 'target');
-    targets['right'] = createSprite(targetHeight, 'right', 'target');
+    targets['right'] = createSprite(targetHeight, 'right', 'target')
+    //scoreText = game.add.text(10, 20, "Score " + score, {fill: "white"})
+    drill = game.add.sprite(70, drillStartPos, 'drill');
     startGame();
 }
 
@@ -118,7 +125,13 @@ function createArrow(direction) {
 function updateScore(amount) {
   // adds the given amount to the score and updates the score text
   score = Math.max(score + amount, 0);
+  updateDrill()
   scoreText.setText("Score " + score)
+}
+
+function updateDrill() {
+    drillPos = drillStartPos + score/maxScore*(drillEndPos - drillStartPos)
+    drill.y = drillPos;
 }
 
 function update() {
