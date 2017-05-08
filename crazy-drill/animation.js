@@ -1,11 +1,11 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'crazy-drill', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
-    game.load.image('arrow', 'assets/arrow.png');
-    game.load.image('target', 'assets/target.png');
-    game.load.image('hit', 'assets/hit.png');
-    game.load.image('miss', 'assets/miss.png');
-    game.load.audio('background', ['assets/Vicious.mp3', 'assets/Vicious.ogg']);
+    game.load.image('arrow', 'crazy-drill/assets/arrow.png');
+    game.load.image('target', 'crazy-drill/assets/target.png');
+    game.load.image('hit', 'crazy-drill/assets/hit.png');
+    game.load.image('miss', 'crazy-drill/assets/miss.png');
+    game.load.audio('background', ['crazy-drill/assets/Vicious.mp3', 'crazy-drill/assets/Vicious.ogg']);
 }
 
 var timer = 0;
