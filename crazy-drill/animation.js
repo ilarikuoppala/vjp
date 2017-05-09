@@ -11,6 +11,7 @@ function preload() {
     game.load.image('ground', basedir + '/assets/ground.png');
     game.load.image('drill', basedir + '/assets/drill.png');
     game.load.audio('background', [ basedir + '/assets/Vicious.mp3', basedir + '/assets/Vicious.ogg']);
+    game.load.audio('hard', [basedir + '/assets/Exit_the_premises.mp3', basedir + '/assets/Exit_the_premises.ogg']);
     game.load.spritesheet('button', basedir + '/assets/button.png', 500, 400);
 }
 
@@ -19,7 +20,8 @@ var randomInteger = 0;
 var tau = Math.PI*2
 
 var gameLength = 200; // How many arrows to spawn until the game is over
-var arrowInterval = Phaser.Timer.SECOND*3/4*1/2;
+var bpm = 80; // Beats per minute
+var arrowSpeed = 4;
 var t = 150;
 var left = 250;
 var leftColumn = 250;
@@ -30,7 +32,7 @@ var score = 0;
 var maxScore = gameLength*10
 var drillStartPos = 80;
 var drillEndPos = 470;
-var gameOver = false;
+var gameOver = true;
 
 var targets = {};
 var arrows = { up:[], down:[], left:[], right:[] };
@@ -42,9 +44,12 @@ var scoreText;
 var music;
 var button;
 var buttonText;
+var difficultyButton;
+var difficultyText;
+var difficulty = 0;
 
 function getRandomInteger(min, max) {
-    randomInteger = Math.floor((Math.random() * max) + min);
+    return Math.floor((Math.random() * max) + min);
 }
 
 function createSprite(height, direction, sprite) {
@@ -60,19 +65,57 @@ function createSprite(height, direction, sprite) {
   return sprite
 }
 
+function startMenu() {
+  button = game.add.button(game.world.centerX - 95, 300, 'button', onPlayButtonClick, this, 2, 1, 0);
+  buttonText = game.add.text(335, 335, "Start Game", {fill: "white"});
+  difficultyButton = game.add.button(game.world.centerX, 200, 'button', changeDifficulty, this, 2, 1, 0);
+  difficultyButton.pivot.x = 99;
+  difficultyButton.pivot.y = 50;
+  difficultyButton.scale.setTo(1.2,1.2)
+  difficultyText = game.add.text(game.world.centerX - 95, 185, "Difficulty: ", {fill: "white"});
+  updateDifficulty();
+}
+
+function changeDifficulty() {
+  difficulty ++;
+  difficulty = difficulty%2;
+  updateDifficulty();
+}
+
+function updateDifficulty() {
+  switch (difficulty) {
+    case 0:
+      difficultyText.setText("Difficulty: Easy");
+      bpm = 160;
+      gameLength = 200;
+      arrowSpeed = 4;
+      music = game.add.audio('background');
+      break;
+    case 1:
+      difficultyText.setText("Difficulty: Hard");
+      music = game.add.audio('hard');
+      arrowSpeed = 7;
+      gameLength = 300;
+      bpm = 270;
+      break;
+  }
+  // Always 10 frames margin to hit the target
+  hitMargin = 10*arrowSpeed;
+}
+
 function create() {
     ground = game.add.tileSprite(0, 0, 800, 600, 'ground');
-    music = game.add.audio('background');
     scoreText = game.add.text(10, 20, "Score " + score, {fill: "white"});
     targets['left'] = createSprite(targetHeight, 'left', 'target');
     targets['up'] = createSprite(targetHeight, 'up', 'target');
     targets['down'] = createSprite(targetHeight, 'down', 'target');
     targets['right'] = createSprite(targetHeight, 'right', 'target')
     drill = game.add.sprite(70, drillStartPos, 'drill');
-    startGame();
+    startMenu()
 }
 
 function startGame() {
+  arrowInterval = Phaser.Timer.SECOND*60/bpm;
   gameOver = false;
   score = 0;
   updateScore(0);
@@ -85,38 +128,38 @@ function endGame() {
   music.stop()
   scoreText.setText("Game over! \nYour score was " + score)
   gameOver = true;
-  button = game.add.button(game.world.centerX - 95, 300, 'button', actionOnClick, this, 2, 1, 0);
-  buttonText = game.add.text(335, 335, "Play again");
+  button = game.add.button(game.world.centerX - 95, 300, 'button', onButtonClick, this, 2, 1, 0);
+  buttonText = game.add.text(335, 335, "Menu", {fill: "white"});
 }
 
-function actionOnClick () {
+function onButtonClick () {
   button.destroy()
   buttonText.destroy()
+  startMenu();
+}
+
+function onPlayButtonClick () {
+  button.destroy()
+  buttonText.destroy()
+  difficultyButton.destroy()
+  difficultyText.destroy()
   startGame();
 }
 
 function active() {
-
-    getRandomInteger(0,4);
-
-    switch (randomInteger) {
-        case 0:
-            createArrow('left');
-            break;
-        case 1:
-            createArrow('up');
-            break;
-        case 2:
-            createArrow('down');
-            break;
-        case 3:
-            createArrow('right');
-            break;
+    var randomInteger = getRandomInteger(0,4);
+    var notUsed = [0,1,2,3]
+    notUsed.splice(randomInteger, 1)
+    var secondRandomInteger = notUsed[getRandomInteger(0,3)];
+    createArrow(randomInteger);
+    if (getRandomInteger(0,10) == 0) {
+      createArrow(secondRandomInteger);
     }
 }
 
 function createArrow(direction) {
     // creates an arrow outside the screen
+    direction = ['left', 'up', 'down', 'right'][direction];
     height = -60;
     arrows[direction].push(createSprite(height, direction, 'arrow'));
 }
@@ -141,7 +184,7 @@ function update() {
 
   for (direction in arrows) {
     for ( var i=0; i < arrows[direction].length; i++ ) {
-      arrows[direction][i].y += 3;
+      arrows[direction][i].y += arrowSpeed;
       // if arrow has passed the target, it is considered dead
       if (arrows[direction][i].y >= targetHeight + hitMargin) {
         deadArrows.push(arrows[direction].splice(i, 1)[0]);
@@ -151,7 +194,7 @@ function update() {
   }
   // keep dead arrows moving until they are no longer visible
   for ( var i=0; i < deadArrows.length; i++ ) {
-    deadArrows[i].y += 3;
+    deadArrows[i].y += arrowSpeed;
     if (deadArrows[i].y > game.height+30) {
       deadArrows.splice(i, 1)[0].destroy();
     }
